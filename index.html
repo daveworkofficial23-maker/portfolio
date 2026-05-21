@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+  <title>Dave Neil Dela Cruz</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      overflow-x: hidden;
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      background-attachment: fixed;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 1.25rem 1rem 2rem;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 24px;
+      padding: 1.75rem 1.5rem;
+      max-width: 420px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    }
+
+    .photo-wrap {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      margin: 0 auto 1rem;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      border: 3px solid rgba(255,255,255,0.2);
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .photo-wrap:hover {
+      transform: scale(1.06);
+      box-shadow: 0 0 0 4px rgba(165,180,252,0.35);
+    }
+
+    .photo-wrap img { width:100%; height:100%; object-fit:cover; border-radius:50%; }
+
+    #photoModal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.88);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem 1rem;
+    }
+
+    #photoModal.active { display: flex; }
+
+    
+
+    @keyframes fadeZoom {
+      from { opacity: 0; transform: scale(0.88); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+
+    .photo-modal-inner {
+    position: relative;
+    max-width: 340px;
+    width: 100%;
+    background: #1e293b;
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 20px;
+    overflow: hidden;
+    animation: fadeZoom 0.22s ease;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.6);
+    }
+
+    .photo-modal-close {
+    background: rgba(239,68,68,0.15);
+    border: 1px solid rgba(239,68,68,0.3);
+    color: #f87171;
+    border-radius: 8px;
+    width: 32px;
+    height: 32px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.15s;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(102,126,234,0.2);
+      border: 1px solid rgba(102,126,234,0.4);
+      border-radius: 100px;
+      padding: 4px 12px;
+      font-size: 0.7rem;
+      color: #a5b4fc;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 0.6rem;
+    }
+
+    .badge::before {
+      content: '';
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #a5b4fc;
+      animation: blink 1.5s infinite;
+      flex-shrink: 0;
+    }
+
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+    @keyframes slideUp {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.5px;
+      margin-bottom: 0.2rem;
+    }
+
+    .title {
+      font-size: 0.82rem;
+      color: #94a3b8;
+      font-weight: 400;
+      margin-bottom: 1rem;
+    }
+
+    .bio {
+      font-size: 0.82rem;
+      color: #cbd5e1;
+      line-height: 1.65;
+      margin-bottom: 1.25rem;
+      padding: 0 0.25rem;
+    }
+
+    .divider {
+      height: 1px;
+      background: rgba(255,255,255,0.08);
+      margin: 1.1rem 0;
+    }
+
+    .section-title {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #64748b;
+      margin-bottom: 0.65rem;
+    }
+
+    .skills {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 6px;
+      margin-bottom: 1.25rem;
+    }
+
+    .skill {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 100px;
+      padding: 4px 11px;
+      font-size: 0.72rem;
+      color: #e2e8f0;
+      font-weight: 500;
+    }
+
+    .links {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 1.25rem;
+    }
+
+    .link-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 11px 16px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-size: 0.82rem;
+      font-weight: 600;
+      transition: transform 0.15s, opacity 0.15s;
+      border: 1px solid transparent;
+    }
+
+    .link-btn:hover { transform: translateY(-2px); opacity: 0.9; }
+    .link-btn.email  { background: rgba(99,102,241,0.2);  border-color: rgba(99,102,241,0.4);  color: #a5b4fc; }
+    .link-btn.phone  { background: rgba(16,185,129,0.15); border-color: rgba(16,185,129,0.35); color: #6ee7b7; }
+    .link-btn.github { background: rgba(255,255,255,0.07);border-color: rgba(255,255,255,0.15);color: #e2e8f0; }
+    .link-btn.fb     { background: rgba(59,130,246,0.15); border-color: rgba(59,130,246,0.35); color: #93c5fd; }
+    .link-icon { font-size: 1rem; }
+
+    .cert {
+      background: rgba(245,158,11,0.1);
+      border: 1px solid rgba(245,158,11,0.25);
+      border-radius: 12px;
+      padding: 11px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .cert-icon { font-size: 1.3rem; flex-shrink: 0; }
+    .cert-name   { font-size: 0.8rem;  font-weight: 600; color: #fcd34d; }
+    .cert-detail { font-size: 0.7rem;  color: #fbbf24; opacity: 0.7; }
+
+    .action-btn {
+      width: 100%;
+      padding: 12px 18px;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: transform 0.15s, opacity 0.15s;
+      border: 1px solid transparent;
+    }
+
+    .action-btn:hover { transform: translateY(-2px); opacity: 0.9; }
+    .action-btn.exp {
+      background: rgba(102,126,234,0.15);
+      border-color: rgba(102,126,234,0.35);
+      color: #a5b4fc;
+    }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 999;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .modal-overlay.active { display: flex; }
+
+    .modal-box {
+      background: #1e293b;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px 20px 0 0;
+      width: 100%;
+      max-width: 440px;
+      animation: slideUp 0.28s ease;
+      max-height: 80vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 1.25rem 0.85rem;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      flex-shrink: 0;
+    }
+
+    .modal-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .modal-close {
+      background: rgba(255,255,255,0.1);
+      border: none;
+      color: #fff;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: background 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .modal-close:hover { background: rgba(239,68,68,0.5); }
+
+    .modal-scroll {
+      overflow-y: auto;
+      padding: 1rem 1.25rem 1.5rem;
+      flex: 1;
+
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .modal-scroll::-webkit-scrollbar { width: 4px; }
+    .modal-scroll::-webkit-scrollbar-track { background: transparent; }
+    .modal-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
+
+    .exp-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-bottom: 9px;
+    }
+
+    .exp-date    { font-size: 0.68rem; color: #64748b; margin-bottom: 2px; }
+    .exp-company { font-size: 0.7rem;  color: #a5b4fc; font-weight: 600; margin-bottom: 2px; }
+    .exp-role    { font-size: 0.84rem; color: #e2e8f0; font-weight: 700; margin-bottom: 6px; }
+    .exp-desc    { font-size: 0.74rem; color: #94a3b8; line-height: 1.6; }
+    .exp-desc ul { margin: 0; padding-left: 1.1rem; }
+    .exp-desc li { margin-bottom: 3px; }
+
+    #certModal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem 1rem;
+    }
+
+    #certModal.active { display: flex; }
+
+    .footer { margin-top: 1.25rem; font-size: 0.7rem; color: #475569; }
+  </style>
+</head>
+<body>
+
+<div class="card">
+
+  <div class="photo-wrap" onclick="document.getElementById('photoModal').classList.add('active')">
+    <img src="picture.jpg" alt="Dave">
+  </div>
+
+  <div class="badge">IT Graduate · Open to Work</div>
+
+  <h1>Dave Neil Dela Cruz</h1>
+  <p class="title">Information Technology Graduate · NEUST '24</p>
+
+  <p class="bio">
+    Motivated Information Technology graduate and working
+    student with diverse experience in warehouse operations,
+    food service, merchandising, and software development.
+    Proven ability to adapt across different work environments
+    and deliver results. Seeking an entry-level position where I
+    can apply my technical and operational skills to contribute
+    to a productive team.
+  </p>
+
+  <div class="divider"></div>
+
+  <p class="section-title">Skills</p>
+  <div class="skills">
+    <span class="skill">HTML</span>
+    <span class="skill">PHP</span>
+    <span class="skill">MS SQL</span>
+    <span class="skill">Microsoft Office</span>
+    <span class="skill">Customer Service</span>
+    <span class="skill">Computer Troubleshooting</span>
+  </div>
+
+  <div class="divider"></div>
+
+  <button class="action-btn exp" onclick="document.getElementById('expModal').classList.add('active')">
+    💼 View Experience
+  </button>
+
+  <div class="divider"></div>
+
+  <p class="section-title">Contact & Links</p>
+  <div class="links">
+    <a href="mailto:dave.work.official23@gmail.com" class="link-btn email">
+      <span class="link-icon">📧</span>
+      dave.work.official23@gmail.com
+    </a>
+    <a href="tel:09091429796" class="link-btn phone">
+      <span class="link-icon">📞</span>
+      0909 142 9796
+    </a>
+    <a href="https://www.facebook.com/delacruzdaveneil" class="link-btn fb" target="_blank">
+      <span class="link-icon">📘</span>
+      Facebook Profile
+    </a>
+    <a href="https://github.com/daveworkofficial23-maker" class="link-btn github" target="_blank">
+      <span class="link-icon">💻</span>
+      GitHub Profile
+    </a>
+  </div>
+
+  <div class="divider"></div>
+
+  <p class="section-title">Certification</p>
+  <div class="cert" onclick="document.getElementById('certModal').classList.add('active')">
+    <div class="cert-icon">🏅</div>
+    <div style="flex:1;">
+      <div class="cert-name">Certiport — HTML and CSS</div>
+      <div class="cert-detail">Valid until November 2030 · ID: waUTS-H94a</div>
+    </div>
+    <div style="font-size:0.72rem; color:#fbbf24; opacity:0.7;">View →</div>
+  </div>
+
+  <p class="footer">© 2026 Dave Neil Dela Cruz · Quezon City, Metro Manila</p>
+
+</div>
+
+<div id="expModal" class="modal-overlay" onclick="this.classList.remove('active')">
+  <div class="modal-box" onclick="event.stopPropagation()">
+
+    <div class="modal-header">
+      <span class="modal-title">💼 Experience</span>
+      <button class="modal-close" onclick="document.getElementById('expModal').classList.remove('active')">✕</button>
+    </div>
+
+    <div class="modal-scroll">
+
+      <div class="exp-card">
+        <div class="exp-date">Feb 2026 – May 2026</div>
+        <div class="exp-company">Talavera Senior High School · Registrar's Office</div>
+        <div class="exp-role">OJT — On the Job Training</div>
+        <div class="exp-desc"><ul>
+          <li>Assisted in daily Registrar's Office operations, including processing and releasing student credentials while providing customer service to clients.</li>
+          <li>Developed a web-based Credential Management System to archive and organize unclaimed graduate records.</li>
+        </ul></div>
+      </div>
+
+      <div class="exp-card">
+        <div class="exp-date">Aug 2025 – Present</div>
+        <div class="exp-company">J&amp;T Express 441 DC · Cabanatuan</div>
+        <div class="exp-role">On-Call Warehouse Staff</div>
+        <div class="exp-desc"><ul>
+          <li>Performed parcel sorting, scanning, packing, and loading/unloading to support efficient dispatch operations.</li>
+          <li>Assisted in maintaining smooth logistics workflow by ensuring accurate parcel handling and timely shipment processing.</li>
+        </ul></div>
+      </div>
+
+      <div class="exp-card">
+        <div class="exp-date">Nov 2022 – May 2025</div>
+        <div class="exp-company">Jollibee Food Corporation · Mega Shell &amp; Talavera</div>
+        <div class="exp-role">Crew Member</div>
+        <div class="exp-desc"><ul>
+          <li>Handled Foodpanda, dine-in, take-out, and drive-thru orders accurately, ensuring timely food preparation and high customer satisfaction.</li>
+          <li>Operated cashier and counter service while maintaining cleanliness, sanitation, and compliance with food safety standards.</li>
+        </ul></div>
+      </div>
+
+      <div class="exp-card">
+        <div class="exp-date">Jan 2020 – May 2022</div>
+        <div class="exp-company">Acabar Marketing International, Inc. · WalterMart San Jose &amp; Talavera</div>
+        <div class="exp-role">Roving Merchandiser</div>
+        <div class="exp-desc"><ul>
+          <li>Assisted customers with product inquiries, processed client orders, and promoted formula milk products across WalterMart branches.</li>
+          <li>Arranged and replenished product displays, monitored inventory, ensured FIFO stock rotation, and coordinated with store staff for promotions.</li>
+        </ul></div>
+      </div>
+
+      <div class="exp-card">
+        <div class="exp-date">Nov 2019 – Dec 2019</div>
+        <div class="exp-company">Jobcon Manpower Services Inc. · WalterMart Supermarket</div>
+        <div class="exp-role">Backup Assistant Warehouse</div>
+        <div class="exp-desc"><ul>
+          <li>Organized products, restocked shelves, and helped maintain smooth daily store and inventory operations.</li>
+          <li>Assisted customers by bagging purchased items efficiently while providing courteous customer service.</li>
+        </ul></div>
+      </div>
+
+      <div class="exp-card">
+        <div class="exp-date">Jan 2019 – Jul 2019</div>
+        <div class="exp-company">Chowking · WalterMart Talavera</div>
+        <div class="exp-role">Crew Member</div>
+        <div class="exp-desc"><ul>
+          <li>Prepared and served customer food orders efficiently while maintaining kitchen cleanliness and compliance with food safety standards.</li>
+          <li>Assisted with customer orders and performed dishwashing duties, keeping kitchen utensils and equipment clean and organized.</li>
+        </ul></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+  <div id="photoModal" onclick="this.classList.remove('active')">
+    <div class="photo-modal-inner" onclick="event.stopPropagation()">
+      <div style="width:100%; aspect-ratio:1/1; overflow:hidden;">
+        <img src="picture.jpg" alt="Dave Neil Dela Cruz" style="width:100%; height:100%; object-fit:cover; display:block; border-radius:0;"/>
+      </div>
+      <div style="padding:14px 16px; display:flex; align-items:center; justify-content:space-between;">
+        <div>
+          <div style="font-size:0.85rem; font-weight:700; color:#e2e8f0;">Dave Neil Dela Cruz</div>
+          <div style="font-size:0.72rem; color:#64748b; margin-top:2px;">IT Graduate · Quezon City</div>
+        </div>
+        <button class="photo-modal-close" onclick="document.getElementById('photoModal').classList.remove('active')">✕</button>
+      </div>
+    </div>
+  </div>
+
+
+  <div id="certModal" onclick="this.classList.remove('active')">
+    <div style="max-width:520px; width:100%; background:#1e293b; border:1px solid rgba(255,255,255,0.12); border-radius:20px; overflow:hidden; box-shadow:0 24px 64px rgba(0,0,0,0.6); animation:fadeZoom 0.22s ease;" onclick="event.stopPropagation()">
+      <div style="padding:14px 16px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.08);">
+        <div>
+          <div style="font-size:0.85rem; font-weight:700; color:#fcd34d;">🏅 Certiport Certificate</div>
+          <div style="font-size:0.72rem; color:#64748b; margin-top:2px;">HTML and CSS · Valid until Nov 2030</div>
+        </div>
+        <button onclick="document.getElementById('certModal').classList.remove('active')"
+          style="background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3); color:#f87171; border-radius:8px; width:32px; height:32px; font-size:0.85rem; cursor:pointer; display:flex; align-items:center; justify-content:center;">✕</button>
+      </div>
+      <div style="padding:14px;">
+        <img src="Certiport.jpg" alt="Certificate" style="width:100%; border-radius:10px; display:block;"/>
+      </div>
+    </div>
+  </div>
+
+  </body>
+  </html>
