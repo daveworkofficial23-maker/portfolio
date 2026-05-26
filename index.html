@@ -4,548 +4,818 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
   <title>Dave Neil Dela Cruz</title>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    html, body {
-      height: 100%;
-      overflow-x: hidden;
+    :root {
+      --bg-deep:    #060b14;
+      --bg-mid:     #0b1120;
+      --bg-card:    rgba(255,255,255,0.042);
+      --border:     rgba(255,255,255,0.09);
+      --accent:     #38bdf8;
+      --accent2:    #818cf8;
+      --accent3:    #34d399;
+      --gold:       #fbbf24;
+      --text:       #e2e8f0;
+      --muted:      #64748b;
+      --sub:        #94a3b8;
     }
+
+    html, body { height: 100%; overflow-x: hidden; }
 
     body {
       min-height: 100vh;
-      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-      background-attachment: fixed;
-      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--bg-deep);
+      font-family: 'DM Sans', sans-serif;
       display: flex;
       align-items: flex-start;
       justify-content: center;
-      padding: 1.25rem 1rem 2rem;
+      padding: 2rem 1rem 3rem;
+      position: relative;
+    }
+
+    .bg-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(90px);
+      opacity: 0.18;
+      animation: drift 12s ease-in-out infinite alternate;
+    }
+
+    .orb-1 { width: 420px; height: 420px; background: #38bdf8; top: -100px; right: -80px; animation-duration: 14s; }
+    .orb-2 { width: 340px; height: 340px; background: #818cf8; bottom: 5%; left: -80px; animation-duration: 18s; animation-delay: -5s; }
+    .orb-3 { width: 240px; height: 240px; background: #34d399; top: 40%; right: -40px; animation-duration: 10s; animation-delay: -2s; opacity: 0.12; }
+
+    @keyframes drift {
+      from { transform: translate(0, 0) scale(1); }
+      to   { transform: translate(30px, 40px) scale(1.08); }
+    }
+
+    .bg-canvas::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle, rgba(255,255,255,0.045) 1px, transparent 1px);
+      background-size: 28px 28px;
     }
 
     .card {
-      background: rgba(255,255,255,0.05);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 24px;
-      padding: 1.75rem 1.5rem;
-      max-width: 420px;
+      position: relative;
+      z-index: 1;
+      background: var(--bg-card);
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 2rem 1.75rem;
+      max-width: 440px;
       width: 100%;
       text-align: center;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+      box-shadow:
+        0 0 0 1px rgba(56,189,248,0.06),
+        0 24px 80px rgba(0,0,0,0.55),
+        inset 0 1px 0 rgba(255,255,255,0.06);
+      opacity: 0;
+      transform: translateY(30px);
+      animation: cardIn 0.7s 0.1s cubic-bezier(0.22,1,0.36,1) forwards;
     }
 
-    .photo-wrap {
-      width: 90px;
-      height: 90px;
-      border-radius: 50%;
-      margin: 0 auto 1rem;
-      background: linear-gradient(135deg, #667eea, #764ba2);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2.5rem;
-      border: 3px solid rgba(255,255,255,0.2);
-      overflow: hidden;
+    @keyframes cardIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .photo-ring {
+      width: 100px;
+      height: 100px;
+      margin: 0 auto 1.25rem;
+      position: relative;
       cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s;
     }
 
-    .photo-wrap:hover {
-      transform: scale(1.06);
-      box-shadow: 0 0 0 4px rgba(165,180,252,0.35);
+    .photo-ring::before {
+      content: '';
+      position: absolute;
+      inset: -3px;
+      border-radius: 50%;
+      background: conic-gradient(var(--accent), var(--accent2), var(--accent3), var(--accent));
+      animation: spin 4s linear infinite;
+      z-index: 0;
     }
 
-    .photo-wrap img { width:100%; height:100%; object-fit:cover; border-radius:50%; }
-
-    #photoModal {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.88);
-      z-index: 1000;
-      align-items: center;
-      justify-content: center;
-      padding: 1.5rem 1rem;
+    .photo-ring::after {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: 50%;
+      background: var(--bg-deep);
+      z-index: 1;
     }
 
-    #photoModal.active { display: flex; }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-    
-
-    @keyframes fadeZoom {
-      from { opacity: 0; transform: scale(0.88); }
-      to   { opacity: 1; transform: scale(1); }
+    .photo-ring img {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 3px solid var(--bg-deep);
+      transition: transform 0.3s;
     }
 
-    .photo-modal-inner {
-    position: relative;
-    max-width: 340px;
-    width: 100%;
-    background: #1e293b;
-    border: 1px solid rgba(255,255,255,0.12);
-    border-radius: 20px;
-    overflow: hidden;
-    animation: fadeZoom 0.22s ease;
-    box-shadow: 0 24px 64px rgba(0,0,0,0.6);
-    }
-
-    .photo-modal-close {
-    background: rgba(239,68,68,0.15);
-    border: 1px solid rgba(239,68,68,0.3);
-    color: #f87171;
-    border-radius: 8px;
-    width: 32px;
-    height: 32px;
-    font-size: 0.85rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    transition: background 0.15s;
-    }
+    .photo-ring:hover img { transform: scale(1.06); }
 
     .badge {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      background: rgba(102,126,234,0.2);
-      border: 1px solid rgba(102,126,234,0.4);
+      gap: 7px;
+      background: rgba(56,189,248,0.1);
+      border: 1px solid rgba(56,189,248,0.28);
       border-radius: 100px;
-      padding: 4px 12px;
-      font-size: 0.7rem;
-      color: #a5b4fc;
+      padding: 5px 14px;
+      font-size: 0.68rem;
+      color: var(--accent);
       font-weight: 600;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.8px;
       text-transform: uppercase;
-      margin-bottom: 0.6rem;
+      margin-bottom: 0.75rem;
+      animation: fadeSlideDown 0.5s 0.5s both;
     }
 
-    .badge::before {
-      content: '';
+    @keyframes fadeSlideDown {
+      from { opacity: 0; transform: translateY(-8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .badge-dot {
       width: 6px; height: 6px;
       border-radius: 50%;
-      background: #a5b4fc;
-      animation: blink 1.5s infinite;
+      background: var(--accent);
+      animation: pulse 1.8s ease-in-out infinite;
       flex-shrink: 0;
     }
 
-    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
-
-    @keyframes slideUp {
-      from { transform: translateY(100%); }
-      to { transform: translateY(0); }
-    }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.85)} }
 
     h1 {
-      font-size: 1.5rem;
-      font-weight: 700;
+      font-family: 'Syne', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 800;
       color: #fff;
       letter-spacing: -0.5px;
-      margin-bottom: 0.2rem;
+      line-height: 1.15;
+      margin-bottom: 0.3rem;
+      animation: fadeSlideDown 0.5s 0.65s both;
     }
 
-    .title {
-      font-size: 0.82rem;
-      color: #94a3b8;
+    .title-sub {
+      font-size: 0.8rem;
+      color: var(--sub);
       font-weight: 400;
-      margin-bottom: 1rem;
+      margin-bottom: 1.1rem;
+      min-height: 1.1em;
+      animation: fadeSlideDown 0.5s 0.75s both;
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 2px;
+      height: 0.85em;
+      background: var(--accent);
+      margin-left: 2px;
+      vertical-align: middle;
+      animation: blink-cur 0.9s step-end infinite;
+    }
+
+    @keyframes blink-cur { 0%,100%{opacity:1} 50%{opacity:0} }
+
+    .stats-row {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 1.2rem;
+      animation: fadeSlideDown 0.5s 0.85s both;
+    }
+
+    .stat-pill {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 8px 14px;
+      text-align: center;
+    }
+
+    .stat-num {
+      font-family: 'Syne', sans-serif;
+      font-size: 1rem;
+      font-weight: 800;
+      color: #fff;
+      display: block;
+    }
+
+    .stat-lbl {
+      font-size: 0.6rem;
+      color: var(--muted);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      display: block;
+      margin-top: 2px;
     }
 
     .bio {
       font-size: 0.82rem;
-      color: #cbd5e1;
-      line-height: 1.65;
-      margin-bottom: 1.25rem;
-      padding: 0 0.25rem;
+      color: var(--sub);
+      line-height: 1.75;
+      margin-bottom: 1.4rem;
+      animation: fadeSlideDown 0.5s 0.95s both;
     }
 
     .divider {
       height: 1px;
-      background: rgba(255,255,255,0.08);
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
       margin: 1.1rem 0;
     }
 
-    .section-title {
-      font-size: 0.65rem;
+    .section-label {
+      font-size: 0.62rem;
       font-weight: 700;
-      letter-spacing: 2px;
+      letter-spacing: 2.5px;
       text-transform: uppercase;
-      color: #64748b;
-      margin-bottom: 0.65rem;
+      color: var(--muted);
+      margin-bottom: 0.8rem;
     }
 
     .skills {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      gap: 6px;
+      gap: 7px;
       margin-bottom: 1.25rem;
     }
 
     .skill {
-      background: rgba(255,255,255,0.07);
-      border: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.09);
       border-radius: 100px;
-      padding: 4px 11px;
+      padding: 5px 13px;
       font-size: 0.72rem;
-      color: #e2e8f0;
+      color: var(--text);
       font-weight: 500;
+      transition: border-color 0.2s, background 0.2s, color 0.2s;
+      cursor: default;
     }
 
-    .links {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-bottom: 1.25rem;
+    .skill:hover {
+      border-color: rgba(56,189,248,0.4);
+      background: rgba(56,189,248,0.08);
+      color: var(--accent);
     }
 
-    .link-btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 11px 16px;
-      border-radius: 12px;
-      text-decoration: none;
-      font-size: 0.82rem;
-      font-weight: 600;
-      transition: transform 0.15s, opacity 0.15s;
-      border: 1px solid transparent;
-    }
-
-    .link-btn:hover { transform: translateY(-2px); opacity: 0.9; }
-    .link-btn.email  { background: rgba(99,102,241,0.2);  border-color: rgba(99,102,241,0.4);  color: #a5b4fc; }
-    .link-btn.phone  { background: rgba(16,185,129,0.15); border-color: rgba(16,185,129,0.35); color: #6ee7b7; }
-    .link-btn.github { background: rgba(255,255,255,0.07);border-color: rgba(255,255,255,0.15);color: #e2e8f0; }
-    .link-btn.fb     { background: rgba(59,130,246,0.15); border-color: rgba(59,130,246,0.35); color: #93c5fd; }
-    .link-icon { font-size: 1rem; }
-
-    .cert {
-      background: rgba(245,158,11,0.1);
-      border: 1px solid rgba(245,158,11,0.25);
-      border-radius: 12px;
-      padding: 11px 14px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      text-align: left;
-      cursor: pointer;
-    }
-
-    .cert-icon { font-size: 1.3rem; flex-shrink: 0; }
-    .cert-name   { font-size: 0.8rem;  font-weight: 600; color: #fcd34d; }
-    .cert-detail { font-size: 0.7rem;  color: #fbbf24; opacity: 0.7; }
-
-    .action-btn {
+    .exp-btn {
       width: 100%;
-      padding: 12px 18px;
-      border-radius: 12px;
+      padding: 13px 18px;
+      border-radius: 14px;
       font-size: 0.85rem;
       font-weight: 600;
       cursor: pointer;
       font-family: inherit;
-      transition: transform 0.15s, opacity 0.15s;
+      border: 1px solid rgba(129,140,248,0.35);
+      background: rgba(129,140,248,0.1);
+      color: var(--accent2);
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    .exp-btn::after {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 60%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+      transition: left 0.5s;
+    }
+
+    .exp-btn:hover::after { left: 150%; }
+    .exp-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(129,140,248,0.2); }
+
+    .links { display: flex; flex-direction: column; gap: 8px; }
+
+    .link-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 16px;
+      border-radius: 13px;
+      text-decoration: none;
+      font-size: 0.82rem;
+      font-weight: 500;
       border: 1px solid transparent;
+      transition: transform 0.15s, box-shadow 0.15s;
+      position: relative;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateX(-12px);
     }
 
-    .action-btn:hover { transform: translateY(-2px); opacity: 0.9; }
-    .action-btn.exp {
-      background: rgba(102,126,234,0.15);
-      border-color: rgba(102,126,234,0.35);
-      color: #a5b4fc;
+    .link-btn.visible {
+      animation: slideInLink 0.4s cubic-bezier(0.22,1,0.36,1) forwards;
     }
 
-    /* ── MODAL ── */
-    .modal-overlay {
+    @keyframes slideInLink {
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    .link-btn::after {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 60%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.07), transparent);
+      transition: left 0.5s;
+    }
+
+    .link-btn:hover::after { left: 150%; }
+    .link-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.3); }
+
+    .link-btn .ico { font-size: 1.05rem; flex-shrink: 0; }
+    .link-btn .arrow { margin-left: auto; opacity: 0.4; font-size: 0.75rem; transition: opacity 0.2s, transform 0.2s; }
+    .link-btn:hover .arrow { opacity: 0.9; transform: translateX(3px); }
+
+    .link-btn.email  { background: rgba(56,189,248,0.09);  border-color: rgba(56,189,248,0.22);  color: #7dd3fc; }
+    .link-btn.phone  { background: rgba(52,211,153,0.09);  border-color: rgba(52,211,153,0.22);  color: #6ee7b7; }
+    .link-btn.fb     { background: rgba(96,165,250,0.09);  border-color: rgba(96,165,250,0.22);  color: #93c5fd; }
+    .link-btn.github { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.12); color: var(--text); }
+
+    .cert-card {
+      background: rgba(251,191,36,0.07);
+      border: 1px solid rgba(251,191,36,0.22);
+      border-radius: 14px;
+      padding: 13px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .cert-card:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(251,191,36,0.12); }
+
+    .cert-icon { font-size: 1.5rem; flex-shrink: 0; }
+    .cert-name { font-size: 0.82rem; font-weight: 700; color: var(--gold); font-family: 'Syne', sans-serif; }
+    .cert-detail { font-size: 0.7rem; color: #fbbf24; opacity: 0.65; margin-top: 2px; }
+
+    .footer {
+      margin-top: 1.5rem;
+      font-size: 0.68rem;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .overlay {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.6);
+      background: rgba(0,0,0,0.75);
+      backdrop-filter: blur(6px);
       z-index: 999;
       align-items: flex-end;
       justify-content: center;
     }
 
-    .modal-overlay.active { display: flex; }
+    .overlay.active { display: flex; }
 
-    .modal-box {
-      background: #1e293b;
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 20px 20px 0 0;
+    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    @keyframes fadeZoom { from { opacity:0; transform:scale(0.9); } to { opacity:1; transform:scale(1); } }
+
+    .sheet {
+      background: #0e1829;
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 24px 24px 0 0;
       width: 100%;
-      max-width: 440px;
-      animation: slideUp 0.28s ease;
-      max-height: 80vh;
+      max-width: 460px;
+      animation: slideUp 0.3s cubic-bezier(0.22,1,0.36,1);
+      max-height: 82vh;
       display: flex;
       flex-direction: column;
-      overflow: hidden;
     }
 
-    .modal-header {
+    .sheet-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 1rem 1.25rem 0.85rem;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
+      padding: 1.1rem 1.35rem 0.9rem;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
       flex-shrink: 0;
     }
 
-    .modal-title {
-      font-size: 0.95rem;
+    .sheet-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 1rem;
       font-weight: 700;
       color: #fff;
     }
 
-    .modal-close {
-      background: rgba(255,255,255,0.1);
-      border: none;
-      color: #fff;
-      border-radius: 50%;
-      width: 30px;
-      height: 30px;
-      font-size: 0.95rem;
+    .close-btn {
+      background: rgba(239,68,68,0.12);
+      border: 1px solid rgba(239,68,68,0.28);
+      color: #f87171;
+      border-radius: 10px;
+      width: 32px; height: 32px;
+      font-size: 0.85rem;
       cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
       transition: background 0.15s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       flex-shrink: 0;
     }
 
-    .modal-close:hover { background: rgba(239,68,68,0.5); }
+    .close-btn:hover { background: rgba(239,68,68,0.28); }
 
-    .modal-scroll {
+    .sheet-body {
       overflow-y: auto;
-      padding: 1rem 1.25rem 1.5rem;
+      padding: 1.1rem 1.35rem 2rem;
       flex: 1;
-
       -webkit-overflow-scrolling: touch;
     }
 
-    .modal-scroll::-webkit-scrollbar { width: 4px; }
-    .modal-scroll::-webkit-scrollbar-track { background: transparent; }
-    .modal-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
+    .sheet-body::-webkit-scrollbar { width: 4px; }
+    .sheet-body::-webkit-scrollbar-track { background: transparent; }
+    .sheet-body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 4px; }
 
-    .exp-card {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 12px;
-      padding: 12px 14px;
-      margin-bottom: 9px;
+    .timeline { position: relative; padding-left: 18px; }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 8px; bottom: 8px;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--accent), var(--accent2), transparent);
+      border-radius: 2px;
     }
 
-    .exp-date    { font-size: 0.68rem; color: #64748b; margin-bottom: 2px; }
-    .exp-company { font-size: 0.7rem;  color: #a5b4fc; font-weight: 600; margin-bottom: 2px; }
-    .exp-role    { font-size: 0.84rem; color: #e2e8f0; font-weight: 700; margin-bottom: 6px; }
-    .exp-desc    { font-size: 0.74rem; color: #94a3b8; line-height: 1.6; }
-    .exp-desc ul { margin: 0; padding-left: 1.1rem; }
-    .exp-desc li { margin-bottom: 3px; }
+    .tl-item {
+      position: relative;
+      padding: 0 0 1.2rem 1.2rem;
+      opacity: 0;
+      transform: translateX(-8px);
+      transition: opacity 0.4s, transform 0.4s;
+    }
 
-    #certModal {
+    .tl-item.visible { opacity: 1; transform: translateX(0); }
+    .tl-item:last-child { padding-bottom: 0; }
+
+    .tl-dot {
+      position: absolute;
+      left: -23px; top: 6px;
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: 2px solid var(--bg-deep);
+      box-shadow: 0 0 0 2px rgba(56,189,248,0.3);
+    }
+
+    .tl-date    { font-size: 0.67rem; color: var(--muted); margin-bottom: 2px; }
+    .tl-company { font-size: 0.7rem;  color: var(--accent); font-weight: 600; margin-bottom: 2px; }
+    .tl-role    { font-family: 'Syne', sans-serif; font-size: 0.88rem; color: var(--text); font-weight: 700; margin-bottom: 6px; }
+    .tl-desc    { font-size: 0.74rem; color: var(--sub); line-height: 1.65; }
+    .tl-desc ul { margin: 0; padding-left: 1.1rem; }
+    .tl-desc li { margin-bottom: 4px; }
+
+    .photo-modal {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.85);
+      background: rgba(0,0,0,0.88);
+      backdrop-filter: blur(8px);
       z-index: 1000;
       align-items: center;
       justify-content: center;
-      padding: 1.5rem 1rem;
+      padding: 1.5rem;
     }
 
-    #certModal.active { display: flex; }
+    .photo-modal.active { display: flex; }
 
-    .footer { margin-top: 1.25rem; font-size: 0.7rem; color: #475569; }
+    .photo-modal-box {
+      max-width: 340px; width: 100%;
+      background: #0e1829;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 22px;
+      overflow: hidden;
+      animation: fadeZoom 0.25s cubic-bezier(0.22,1,0.36,1);
+    }
+
+    .photo-modal-top {
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .cert-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.88);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .cert-modal.active { display: flex; }
+
+    .cert-modal-box {
+      max-width: 520px; width: 100%;
+      background: #0e1829;
+      border: 1px solid rgba(251,191,36,0.2);
+      border-radius: 22px;
+      overflow: hidden;
+      animation: fadeZoom 0.25s cubic-bezier(0.22,1,0.36,1);
+    }
+
+    .cert-modal-top {
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(251,191,36,0.12);
+    }
   </style>
 </head>
 <body>
 
+<div class="bg-canvas">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+</div>
+
 <div class="card">
 
-  <div class="photo-wrap" onclick="document.getElementById('photoModal').classList.add('active')">
-    <img src="picture.jpg" alt="Dave">
+  <div class="photo-ring" onclick="document.getElementById('photoModal').classList.add('active')">
+    <img src="picture.jpg" alt="Dave Neil Dela Cruz"/>
   </div>
 
-  <div class="badge">IT Graduate · Open to Work</div>
+  <div class="badge">
+    <span class="badge-dot"></span>
+    IT Graduate · Open to Work
+  </div>
 
   <h1>Dave Neil Dela Cruz</h1>
-  <p class="title">Information Technology Graduate · NEUST '24</p>
+  <p class="title-sub" id="typeSub"></p>
+
+  <div class="stats-row">
+    <div class="stat-pill">
+      <span class="stat-num">6+</span>
+      <span class="stat-lbl">Years Work Exp</span>
+    </div>
+    <div class="stat-pill">
+      <span class="stat-num">1</span>
+      <span class="stat-lbl">Certification</span>
+    </div>
+    <div class="stat-pill">
+      <span class="stat-num">2026</span>
+      <span class="stat-lbl">NEUST Graduate</span>
+    </div>
+  </div>
 
   <p class="bio">
-    Motivated Information Technology graduate with diverse
-experience in warehouse operations, food service,
-merchandising, and software development. Proven ability
-to adapt across different work environments and deliver
-results. Seeking an entry-level position where I can apply
-my technical and operational skills to contribute to a
-productive team.
+    Motivated Information Technology graduate with diverse experience in warehouse operations, food service,
+    merchandising, and software development. Proven ability to adapt across different work environments and
+    deliver results. Seeking an entry-level position where I can apply my technical and operational skills.
   </p>
 
   <div class="divider"></div>
 
-  <p class="section-title">Skills</p>
+  <p class="section-label">Skills</p>
   <div class="skills">
-    <span class="skill">HTML</span>
-    <span class="skill">PHP</span>
-    <span class="skill">MS SQL</span>
-    <span class="skill">Microsoft Office</span>
-    <span class="skill">Customer Service</span>
-    <span class="skill">Computer Troubleshooting</span>
+    <span class="skill">⌨️ HTML &amp; CSS</span>
+    <span class="skill">🐘 PHP</span>
+    <span class="skill">🗄️ MS SQL</span>
+    <span class="skill">📊 Microsoft Office</span>
+    <span class="skill">🙋 Customer Service</span>
+    <span class="skill">🔧 Troubleshooting</span>
   </div>
 
   <div class="divider"></div>
 
-  <button class="action-btn exp" onclick="document.getElementById('expModal').classList.add('active')">
-    💼 View Experience
+  <button class="exp-btn" onclick="openExp()">
+    💼 View Work Experience
   </button>
 
   <div class="divider"></div>
 
-  <p class="section-title">Contact & Links</p>
+  <p class="section-label">Contact &amp; Links</p>
   <div class="links">
     <a href="mailto:dave.work.official23@gmail.com" class="link-btn email">
-      <span class="link-icon">📧</span>
-      dave.work.official23@gmail.com
+      <span class="ico">📧</span> dave.work.official23@gmail.com
+      <span class="arrow">→</span>
     </a>
     <a href="tel:09091429796" class="link-btn phone">
-      <span class="link-icon">📞</span>
-      0909 142 9796
+      <span class="ico">📞</span> 0909 142 9796
+      <span class="arrow">→</span>
     </a>
     <a href="https://www.facebook.com/delacruzdaveneil" class="link-btn fb" target="_blank">
-      <span class="link-icon">📘</span>
-      Facebook Profile
+      <span class="ico">📘</span> Facebook Profile
+      <span class="arrow">→</span>
     </a>
     <a href="https://github.com/daveworkofficial23-maker" class="link-btn github" target="_blank">
-      <span class="link-icon">💻</span>
-      GitHub Profile
+      <span class="ico">💻</span> GitHub Profile
+      <span class="arrow">→</span>
     </a>
   </div>
 
   <div class="divider"></div>
 
-  <p class="section-title">Certification</p>
-  <div class="cert" onclick="document.getElementById('certModal').classList.add('active')">
+  <p class="section-label">Certification</p>
+  <div class="cert-card" onclick="document.getElementById('certModal').classList.add('active')">
     <div class="cert-icon">🏅</div>
-    <div style="flex:1;">
+    <div style="flex:1; text-align:left;">
       <div class="cert-name">Certiport — HTML and CSS</div>
       <div class="cert-detail">Valid until November 2030 · ID: waUTS-H94a</div>
     </div>
-    <div style="font-size:0.72rem; color:#fbbf24; opacity:0.7;">View →</div>
+    <span style="font-size:0.72rem; color:#fbbf24; opacity:0.6;">View →</span>
   </div>
 
-  <p class="footer">© 2026 Dave Neil Dela Cruz · Quezon City, Metro Manila</p>
+  <div class="footer">
+    <span>⚡</span>
+    <span>© 2026 Dave Neil Dela Cruz · Cabanatuan City, Nueva Ecija</span>
+  </div>
 
 </div>
 
-<div id="expModal" class="modal-overlay" onclick="this.classList.remove('active')">
-  <div class="modal-box" onclick="event.stopPropagation()">
-
-    <div class="modal-header">
-      <span class="modal-title">💼 Experience</span>
-      <button class="modal-close" onclick="document.getElementById('expModal').classList.remove('active')">✕</button>
+<!-- EXPERIENCE MODAL -->
+<div id="expModal" class="overlay" onclick="this.classList.remove('active')">
+  <div class="sheet" onclick="event.stopPropagation()">
+    <div class="sheet-header">
+      <span class="sheet-title">💼 Work Experience</span>
+      <button class="close-btn" onclick="document.getElementById('expModal').classList.remove('active')">✕</button>
     </div>
-
-    <div class="modal-scroll">
-
-      <div class="exp-card">
-        <div class="exp-date">Feb 2026 – May 2026</div>
-        <div class="exp-company">Talavera Senior High School · Registrar's Office</div>
-        <div class="exp-role">OJT — On the Job Training</div>
-        <div class="exp-desc"><ul>
-          <li>Assisted in daily Registrar's Office operations, including processing and releasing student credentials while providing customer service to clients.</li>
-          <li>Developed a web-based Credential Management System to archive and organize unclaimed graduate records.</li>
-        </ul></div>
+    <div class="sheet-body">
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-dot" style="background:var(--accent3);"></div>
+          <div class="tl-date">February 2026 – May 2026</div>
+          <div class="tl-company">On The Job Training Program · Talavera Senior High School</div>
+          <div class="tl-role">OJT — On the Job Training</div>
+          <div class="tl-desc"><ul>
+            <li>Assisted in Registrar's Office daily operations, including processing and releasing student credentials while providing customer service to clients.</li>
+            <li>Developed a web-based Credential Management System to archive and organize unclaimed graduate records for efficient retrieval and record keeping.</li>
+          </ul></div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot" style="background:var(--accent);"></div>
+          <div class="tl-date">August 2025 – Present</div>
+          <div class="tl-company">J&amp;T Express 441 DC Cabanatuan Branch</div>
+          <div class="tl-role">On-Call Warehouse Staff</div>
+          <div class="tl-desc"><ul>
+            <li>Performed on-call warehouse duties at J&amp;T Express 441 DC Cabanatuan Branch, handling parcel sorting, scanning, packing, and loading/unloading to support efficient dispatch operations.</li>
+            <li>Assisted in maintaining smooth logistics workflow by ensuring accurate parcel handling and timely shipment processing.</li>
+          </ul></div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-date">November 2022 – May 2025</div>
+          <div class="tl-company">Jollibee Food Corporation · Mega Shell &amp; Talavera Branch</div>
+          <div class="tl-role">Crew Member</div>
+          <div class="tl-desc"><ul>
+            <li>Provided customer service by accurately handling Foodpanda, dine-in, take-out, and drive-thru orders, ensuring timely food preparation and high customer satisfaction.</li>
+            <li>Operated cashier and counter service efficiently while maintaining cleanliness, proper sanitation, and compliance with food safety standards throughout daily operations.</li>
+          </ul></div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot" style="background:var(--accent2);"></div>
+          <div class="tl-date">January 2020 – May 2022</div>
+          <div class="tl-company">Acabar Marketing International, Inc. · WalterMart San Jose &amp; Talavera</div>
+          <div class="tl-role">Roving Merchandiser</div>
+          <div class="tl-desc"><ul>
+            <li>Provided customer service by assisting customers with product inquiries, processing client orders, and promoting assigned formula milk products across WalterMart Supermarket branches in San Jose City and Talavera, ensuring customer satisfaction and strong client relations.</li>
+            <li>Arranged and replenished product displays, monitored inventory levels, ensured proper stock rotation (FIFO), and coordinated with store staff for promotions while maintaining clean, organized, and visually appealing shelves.</li>
+          </ul></div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-date">November 2019 – December 2019</div>
+          <div class="tl-company">Jobcon Manpower Services Incorporated · WalterMart Supermarket Backup Assistant Warehouse</div>
+          <div class="tl-role">Backup Assistant Warehouse</div>
+          <div class="tl-desc"><ul>
+            <li>Supported supermarket staff by organizing products, restocking shelves, and helping maintain smooth daily store and inventory operations.</li>
+            <li>Assisted customers by bagging purchased items carefully and efficiently during busy store operations while providing courteous and friendly customer service.</li>
+          </ul></div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot" style="background:var(--gold);"></div>
+          <div class="tl-date">January 2019 – July 2019</div>
+          <div class="tl-company">Chowking · WalterMart Talavera</div>
+          <div class="tl-role">Crew Member</div>
+          <div class="tl-desc"><ul>
+            <li>Prepared and served customer food orders efficiently while maintaining kitchen cleanliness, proper sanitation, and compliance with food safety and hygiene standards during daily operations.</li>
+            <li>Provided customer service by assisting and serving customer orders when needed, while also working as a dishwasher responsible for cleaning kitchen utensils, dishes, and cooking equipment to maintain an organized and sanitary work environment.</li>
+          </ul></div>
+        </div>
       </div>
-
-      <div class="exp-card">
-        <div class="exp-date">Aug 2025 – Present</div>
-        <div class="exp-company">J&amp;T Express 441 DC · Cabanatuan</div>
-        <div class="exp-role">On-Call Warehouse Staff</div>
-        <div class="exp-desc"><ul>
-          <li>Performed parcel sorting, scanning, packing, and loading/unloading to support efficient dispatch operations.</li>
-          <li>Assisted in maintaining smooth logistics workflow by ensuring accurate parcel handling and timely shipment processing.</li>
-        </ul></div>
-      </div>
-
-      <div class="exp-card">
-        <div class="exp-date">Nov 2022 – May 2025</div>
-        <div class="exp-company">Jollibee Food Corporation · Mega Shell &amp; Talavera</div>
-        <div class="exp-role">Crew Member</div>
-        <div class="exp-desc"><ul>
-          <li>Handled Foodpanda, dine-in, take-out, and drive-thru orders accurately, ensuring timely food preparation and high customer satisfaction.</li>
-          <li>Operated cashier and counter service while maintaining cleanliness, sanitation, and compliance with food safety standards.</li>
-        </ul></div>
-      </div>
-
-      <div class="exp-card">
-        <div class="exp-date">Jan 2020 – May 2022</div>
-        <div class="exp-company">Acabar Marketing International, Inc. · WalterMart San Jose &amp; Talavera</div>
-        <div class="exp-role">Roving Merchandiser</div>
-        <div class="exp-desc"><ul>
-          <li>Assisted customers with product inquiries, processed client orders, and promoted formula milk products across WalterMart branches.</li>
-          <li>Arranged and replenished product displays, monitored inventory, ensured FIFO stock rotation, and coordinated with store staff for promotions.</li>
-        </ul></div>
-      </div>
-
-      <div class="exp-card">
-        <div class="exp-date">Nov 2019 – Dec 2019</div>
-        <div class="exp-company">Jobcon Manpower Services Inc. · WalterMart Supermarket</div>
-        <div class="exp-role">Backup Assistant Warehouse</div>
-        <div class="exp-desc"><ul>
-          <li>Organized products, restocked shelves, and helped maintain smooth daily store and inventory operations.</li>
-          <li>Assisted customers by bagging purchased items efficiently while providing courteous customer service.</li>
-        </ul></div>
-      </div>
-
-      <div class="exp-card">
-        <div class="exp-date">Jan 2019 – Jul 2019</div>
-        <div class="exp-company">Chowking · WalterMart Talavera</div>
-        <div class="exp-role">Crew Member</div>
-        <div class="exp-desc"><ul>
-          <li>Prepared and served customer food orders efficiently while maintaining kitchen cleanliness and compliance with food safety standards.</li>
-          <li>Assisted with customer orders and performed dishwashing duties, keeping kitchen utensils and equipment clean and organized.</li>
-        </ul></div>
-      </div>
-
     </div>
   </div>
 </div>
 
-  <div id="photoModal" onclick="this.classList.remove('active')">
-    <div class="photo-modal-inner" onclick="event.stopPropagation()">
-       <div style="padding:14px 16px; display:flex; align-items:center; justify-content:space-between;">
-        <div>
-          <div style="font-size:0.85rem; font-weight:700; color:#e2e8f0;">Dave Neil Dela Cruz</div>
-          <div style="font-size:0.72rem; color:#64748b; margin-top:2px;">IT Graduate · Quezon City</div>
-        </div>
-        <button class="photo-modal-close" onclick="document.getElementById('photoModal').classList.remove('active')">✕</button>
+<!-- PHOTO MODAL -->
+<div id="photoModal" class="photo-modal" onclick="this.classList.remove('active')">
+  <div class="photo-modal-box" onclick="event.stopPropagation()">
+    <div class="photo-modal-top">
+      <div style="text-align:left;">
+        <div style="font-size:0.88rem; font-weight:700; color:var(--text); font-family:'Syne',sans-serif;">Dave Neil Dela Cruz</div>
+        <div style="font-size:0.7rem; color:var(--muted); margin-top:2px;">IT Graduate · Cabanatuan City</div>
       </div>
-      <div style="width:100%; aspect-ratio:1/1; overflow:hidden;">
-        <img src="picture.jpg" alt="Dave Neil Dela Cruz" style="width:100%; height:100%; object-fit:cover; display:block; border-radius:0;"/>
-      </div>
-     
+      <button class="close-btn" onclick="document.getElementById('photoModal').classList.remove('active')">✕</button>
+    </div>
+    <div style="width:100%; aspect-ratio:1/1; overflow:hidden;">
+      <img src="picture.jpg" alt="Dave" style="width:100%; height:100%; object-fit:cover; display:block;"/>
     </div>
   </div>
+</div>
 
-
-  <div id="certModal" onclick="this.classList.remove('active')">
-    <div style="max-width:520px; width:100%; background:#1e293b; border:1px solid rgba(255,255,255,0.12); border-radius:20px; overflow:hidden; box-shadow:0 24px 64px rgba(0,0,0,0.6); animation:fadeZoom 0.22s ease;" onclick="event.stopPropagation()">
-      <div style="padding:14px 16px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.08);">
-        <div>
-          <div style="font-size:0.85rem; font-weight:700; color:#fcd34d;">🏅 Certiport Certificate</div>
-          <div style="font-size:0.72rem; color:#64748b; margin-top:2px;">HTML and CSS · Valid until Nov 2030</div>
-        </div>
-        <button onclick="document.getElementById('certModal').classList.remove('active')"
-          style="background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3); color:#f87171; border-radius:8px; width:32px; height:32px; font-size:0.85rem; cursor:pointer; display:flex; align-items:center; justify-content:center;">✕</button>
+<!-- CERT MODAL -->
+<div id="certModal" class="cert-modal" onclick="this.classList.remove('active')">
+  <div class="cert-modal-box" onclick="event.stopPropagation()">
+    <div class="cert-modal-top">
+      <div style="text-align:left;">
+        <div style="font-size:0.88rem; font-weight:700; color:var(--gold); font-family:'Syne',sans-serif;">🏅 Certiport Certificate</div>
+        <div style="font-size:0.7rem; color:var(--muted); margin-top:2px;">HTML and CSS · Valid until Nov 2030</div>
       </div>
-      <div style="padding:14px;">
-        <img src="Certiport.jpg" alt="Certificate" style="width:100%; border-radius:10px; display:block;"/>
-      </div>
+      <button class="close-btn" onclick="document.getElementById('certModal').classList.remove('active')">✕</button>
+    </div>
+    <div style="padding:14px;">
+      <img src="Certiport.jpg" alt="Certificate" style="width:100%; border-radius:12px; display:block;"/>
     </div>
   </div>
+</div>
 
-  </body>
-  </html>
+<script>
+  const phrases = [
+    'Information Technology Graduate',
+    'NEUST · Class of 2026',
+    'Web Systems Technology Specialist',
+  ];
+  let pi = 0, ci = 0, deleting = false;
+  const el = document.getElementById('typeSub');
+
+  function type() {
+    const phrase = phrases[pi];
+    if (!deleting) {
+      el.innerHTML = phrase.slice(0, ci + 1) + '<span class="cursor"></span>';
+      ci++;
+      if (ci === phrase.length) { deleting = true; setTimeout(type, 1800); return; }
+    } else {
+      el.innerHTML = phrase.slice(0, ci - 1) + '<span class="cursor"></span>';
+      ci--;
+      if (ci === 0) { deleting = false; pi = (pi + 1) % phrases.length; }
+    }
+    setTimeout(type, deleting ? 45 : 72);
+  }
+  type();
+
+  window.addEventListener('load', () => {
+    document.querySelectorAll('.link-btn').forEach((btn, i) => {
+      setTimeout(() => btn.classList.add('visible'), 300 + i * 80);
+    });
+  });
+
+  function openExp() {
+    document.getElementById('expModal').classList.add('active');
+    setTimeout(() => {
+      document.querySelectorAll('.tl-item').forEach((item, i) => {
+        setTimeout(() => item.classList.add('visible'), i * 100);
+      });
+    }, 50);
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      ['expModal','photoModal','certModal'].forEach(id =>
+        document.getElementById(id).classList.remove('active')
+      );
+    }
+  });
+</script>
+</body>
+</html>
