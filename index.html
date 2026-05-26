@@ -169,7 +169,7 @@
 
     h1 {
       font-family: 'Syne', sans-serif;
-      font-size: 1.3rem;
+      font-size: clamp(1rem, 5vw, 1.3rem);
       font-weight: 800;
       color: #fff;
       letter-spacing: -0.5px;
@@ -202,29 +202,32 @@
     .stats-row {
       display: flex;
       justify-content: center;
-      gap: 12px;
+      gap: 8px;
       margin-bottom: 1.2rem;
       animation: fadeSlideDown 0.5s 0.85s both;
+      flex-wrap: wrap;
     }
 
     .stat-pill {
       background: rgba(255,255,255,0.05);
       border: 1px solid rgba(255,255,255,0.1);
       border-radius: 12px;
-      padding: 8px 14px;
+      padding: 8px 10px;
       text-align: center;
+      flex: 1;
+      min-width: 80px;
     }
 
     .stat-num {
       font-family: 'Syne', sans-serif;
-      font-size: 1rem;
+      font-size: clamp(0.85rem, 4vw, 1rem);
       font-weight: 800;
       color: #fff;
       display: block;
     }
 
     .stat-lbl {
-      font-size: 0.6rem;
+      font-size: clamp(0.52rem, 2vw, 0.6rem);
       color: var(--muted);
       letter-spacing: 0.5px;
       text-transform: uppercase;
@@ -586,7 +589,7 @@
 
   <div class="stats-row">
     <div class="stat-pill">
-      <span class="stat-num">6+</span>
+      <span class="stat-num">6</span>
       <span class="stat-lbl">Years Work Exp</span>
     </div>
     <div class="stat-pill">
